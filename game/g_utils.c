@@ -422,7 +422,7 @@ edict_t *G_Spawn (void)
 	int			i;
 	edict_t		*e;
 
-	e = &g_edicts[(int)maxclients->value+1];
+	e = &g_edicts[(int)maxclients->value+1];// g_edicts is the big list of entities
 	for ( i=maxclients->value+1 ; i<globals.num_edicts ; i++, e++)
 	{
 		// the first couple seconds of server time can involve a lot of

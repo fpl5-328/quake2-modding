@@ -307,10 +307,10 @@ void blaster_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *
 {
 	int		mod;
 
-	if (other == self->owner)
+	if (other == self->owner)//if blaster bolt is clipping yourself, return(don't do anything)
 		return;
 
-	if (surf && (surf->flags & SURF_SKY))
+	if (surf && (surf->flags & SURF_SKY))// if we hit the or surface sky go away and don't do anything
 	{
 		G_FreeEdict (self);
 		return;
@@ -342,14 +342,29 @@ void blaster_touch (edict_t *self, edict_t *other, cplane_t *plane, csurface_t *
 	G_FreeEdict (self);
 }
 
-void fire_blaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, int effect, qboolean hyper)
+/*
+void blaster_think(edict_t* self) {
+	vec3_t dir = { 0 };
+	if (!self)return;
+
+	dir[0] = crandom();
+	dir[1] = crandom();
+	dir[2] = crandom();
+
+
+}
+*/
+
+
+void fire_blaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, int effect, qboolean hyper)//self is the thing firing the blaster
 {
 	edict_t	*bolt;
 	trace_t	tr;
 
 	VectorNormalize (dir);
 
-	bolt = G_Spawn();
+	bolt = G_Spawn();//bullet being spawned
+	if (!bolt)return;//added code for checking for entity "Not as quake do" never trust a pointer
 	bolt->svflags = SVF_DEADMONSTER;
 	// yes, I know it looks weird that projectiles are deadmonsters
 	// what this means is that when prediction is used against the object
@@ -358,7 +373,7 @@ void fire_blaster (edict_t *self, vec3_t start, vec3_t dir, int damage, int spee
 	// is very jerky since you are predicted 'against' the shots.
 	VectorCopy (start, bolt->s.origin);
 	VectorCopy (start, bolt->s.old_origin);
-	vectoangles (dir, bolt->s.angles);
+	vectoangles (dir, bolt->s.angles);//rotate the model
 	VectorScale (dir, speed, bolt->velocity);
 	bolt->movetype = MOVETYPE_FLYMISSILE;
 	bolt->clipmask = MASK_SHOT;
@@ -605,7 +620,8 @@ void rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *su
 	}
 
 	T_RadiusDamage(ent, ent->owner, ent->radius_dmg, other, ent->dmg_radius, MOD_R_SPLASH);
-
+	//return;
+	
 	gi.WriteByte (svc_temp_entity);
 	if (ent->waterlevel)
 		gi.WriteByte (TE_ROCKET_EXPLOSION_WATER);
@@ -615,6 +631,8 @@ void rocket_touch (edict_t *ent, edict_t *other, cplane_t *plane, csurface_t *su
 	gi.multicast (ent->s.origin, MULTICAST_PHS);
 
 	G_FreeEdict (ent);
+	
+	
 }
 
 void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed, float damage_radius, int radius_damage)
@@ -626,7 +644,7 @@ void fire_rocket (edict_t *self, vec3_t start, vec3_t dir, int damage, int speed
 	VectorCopy (dir, rocket->movedir);
 	vectoangles (dir, rocket->s.angles);
 	VectorScale (dir, speed, rocket->velocity);
-	rocket->movetype = MOVETYPE_FLYMISSILE;
+	rocket->movetype = MOVETYPE_FLYMISSILE; //MOVETYPE_FLYRICOCHET; stuff for richochet
 	rocket->clipmask = MASK_SHOT;
 	rocket->solid = SOLID_BBOX;
 	rocket->s.effects |= EF_ROCKET;

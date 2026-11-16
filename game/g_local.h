@@ -195,7 +195,8 @@ MOVETYPE_STEP,			// gravity, special edge handling
 MOVETYPE_FLY,
 MOVETYPE_TOSS,			// gravity
 MOVETYPE_FLYMISSILE,	// extra size to monsters
-MOVETYPE_BOUNCE
+MOVETYPE_BOUNCE,
+//MOVETYPE_FLYRICOCHET  //Modded, hopefully make rockets bounce;
 } movetype_t;
 
 
@@ -932,6 +933,7 @@ struct gclient_s
 
 	int			machinegun_shots;	// for weapon raising
 
+
 	// animation vars
 	int			anim_end;
 	int			anim_priority;
@@ -1038,9 +1040,9 @@ struct edict_s
 
 	float		nextthink;
 	void		(*prethink) (edict_t *ent);
-	void		(*think)(edict_t *self);
-	void		(*blocked)(edict_t *self, edict_t *other);	//move to moveinfo?
-	void		(*touch)(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf);
+	void		(*think)(edict_t *self); //pointer to itself and returns nothing
+	void		(*blocked)(edict_t *self, edict_t *other);	//move to moveinfo? 
+	void		(*touch)(edict_t *self, edict_t *other, cplane_t *plane, csurface_t *surf); 
 	void		(*use)(edict_t *self, edict_t *other, edict_t *activator);
 	void		(*pain)(edict_t *self, edict_t *other, float kick, int damage);
 	void		(*die)(edict_t *self, edict_t *inflictor, edict_t *attacker, int damage, vec3_t point);
