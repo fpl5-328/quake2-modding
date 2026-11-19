@@ -898,16 +898,26 @@ void Cmd_PlayerList_f(edict_t *ent)
 	}
 	gi.cprintf(ent, PRINT_HIGH, "%s", text);
 }
-
+void Cmd_DropBomb_f(edict_t* ent) {
+	vec3_t aimdir = { 0, 0, -1 };
+	vec3_t forward;
+	if (!ent) {
+		return;
+	}
+	fire_grenade2(ent, ent->s.origin, aimdir, 100, 10, 2, 1000, false);
+}
 
 /*
 =================
 ClientCommand
 =================
 */
-void ClientCommand (edict_t *ent)
+void ClientCommand (edict_t *ent)//entity is the player entity
 {
 	char	*cmd;
+	if (!ent) {//added safety check
+		return;
+	}
 
 	if (!ent->client)
 		return;		// not fully in game yet
@@ -987,6 +997,8 @@ void ClientCommand (edict_t *ent)
 		Cmd_Wave_f (ent);
 	else if (Q_stricmp(cmd, "playerlist") == 0)
 		Cmd_PlayerList_f(ent);
+	else if (Q_stricmp(cmd, "drop_bomb") == 0)
+		Cmd_DropBomb_f(ent);
 	else	// anything that doesn't match a command will be a chat
 		Cmd_Say_f (ent, false, true);
 }
